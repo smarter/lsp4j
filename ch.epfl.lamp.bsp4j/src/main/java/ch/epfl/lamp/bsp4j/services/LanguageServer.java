@@ -15,11 +15,9 @@ import org.eclipse.lsp4j.InitializedParams;
 import org.eclipse.lsp4j.jsonrpc.services.JsonDelegate;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.lsp4j.jsonrpc.services.JsonRequest;
+import org.eclipse.lsp4j.jsonrpc.services.JsonSegment;
 
-/**
- * Interface for implementations of
- * https://github.com/Microsoft/vscode-languageserver-protocol
- */
+@JsonSegment("build")
 public interface LanguageServer {
 	/**
 	 * The initialize request is sent as the first request from the client to
