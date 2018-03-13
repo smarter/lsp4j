@@ -9,9 +9,9 @@ package ch.epfl.lamp.bsp4j.services;
 
 import java.util.concurrent.CompletableFuture;
 
-import org.eclipse.lsp4j.InitializeParams;
-import org.eclipse.lsp4j.InitializeResult;
-import org.eclipse.lsp4j.InitializedParams;
+import ch.epfl.lamp.bsp4j.InitializeBuildParams;
+import ch.epfl.lamp.bsp4j.InitializeBuildResult;
+import ch.epfl.lamp.bsp4j.InitializedBuildParams;
 import org.eclipse.lsp4j.jsonrpc.services.JsonDelegate;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.lsp4j.jsonrpc.services.JsonRequest;
@@ -34,7 +34,7 @@ public interface LanguageServer {
 	 * window/logMessage and telemetry/event as well as the window/showMessageRequest request to the client.
 	 */
 	@JsonRequest
-	CompletableFuture<InitializeResult> initialize(InitializeParams params);
+	CompletableFuture<InitializeBuildResult> initialize(InitializeBuildParams params);
 
 	/**
 	 * The initialized notification is sent from the client to the server after
@@ -44,14 +44,7 @@ public interface LanguageServer {
 	 * register capabilities.
 	 */
 	@JsonNotification
-	default void initialized(InitializedParams params) {
-		initialized();
-	}
-	/**
-	 * @deprecated see initialized(InitializedParams)
-	 */
-	@Deprecated
-	default void initialized() {
+	default void initialized(InitializedBuildParams params) {
 	}
 
 	/**
@@ -60,13 +53,13 @@ public interface LanguageServer {
 	 * delivered correctly to the client). There is a separate exit notification
 	 * that asks the server to exit.
 	 */
-	@JsonRequest
+	@JsonRequest(useSegment = false)
 	CompletableFuture<Object> shutdown();
 
 	/**
 	 * A notification to ask the server to exit its process.
 	 */
-	@JsonNotification
+	@JsonNotification(useSegment = false)
 	void exit();
 
 	/**

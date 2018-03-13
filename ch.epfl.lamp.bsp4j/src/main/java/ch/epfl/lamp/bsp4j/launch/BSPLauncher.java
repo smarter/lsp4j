@@ -15,10 +15,10 @@ import java.util.function.Function;
 
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer;
-import org.eclipse.lsp4j.services.LanguageClient;
-import org.eclipse.lsp4j.services.LanguageServer;
+import ch.epfl.lamp.bsp4j.services.LanguageClient;
+import ch.epfl.lamp.bsp4j.services.LanguageServer;
 
-public class LSPLauncher {
+public class BSPLauncher {
 	
 	public static Launcher<LanguageClient> createServerLauncher(LanguageServer server, InputStream in, OutputStream out) {
 		return Launcher.createLauncher(server, LanguageClient.class, in, out);

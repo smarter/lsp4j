@@ -1506,68 +1506,43 @@ interface InitializeErrorCode {
  * The initialize request is sent as the first request from the client to the server.
  */
 @JsonRpcData
-class InitializeParams {
+class InitializeBuildParams {
 	/**
-	 * The process Id of the parent process that started the server.
-	 */
-	Integer processId
-
-	/**
-	 * The rootPath of the workspace. Is null if no folder is open.
-	 * 
-	 * @deprecated in favour of rootUri.
-	 */
-	@Deprecated
-	String rootPath
-	
-	/**
-     * The rootUri of the workspace. Is null if no folder is open.
-     */
+   * The rootUri of the workspace. Is null if no folder is open.
+   */
 	String rootUri
-
-	/**
-	 * User provided initialization options.
-	 */
-	Object initializationOptions
 
 	/**
 	 * The capabilities provided by the client (editor)
 	 */
 	ClientCapabilities capabilities
-
-	/**
-	 * An optional extension to the protocol.
-	 * To tell the server what client (editor) is talking to it.
-	 */
-	@Deprecated
-	String clientName
 	
 	/**
-     * The initial trace setting. If omitted trace is disabled ('off').
-     * 
-     * Legal values: 'off' | 'messages' | 'verbose'
-     */
-    String trace
+   * The initial trace setting. If omitted trace is disabled ('off').
+   * 
+   * Legal values: 'off' | 'messages' | 'verbose'
+   */
+  String trace
 }
 
 @JsonRpcData
-class InitializeResult {
+class InitializeBuildResult {
 	/**
-	 * The capabilities the language server provides.
+	 * The capabilities of the build server
 	 */
 	@NonNull
-	ServerCapabilities capabilities
+	BuildServerCapabilities capabilities
     
     new() {
     }
     
-    new(@NonNull ServerCapabilities capabilities) {
+    new(@NonNull BuildServerCapabilities capabilities) {
     	this.capabilities = capabilities
     }
 }
 
 @JsonRpcData
-class InitializedParams {
+class InitializedBuildParams {
 	
 }
 
@@ -1818,105 +1793,20 @@ class RenameParams {
 }
 
 @JsonRpcData
-class ServerCapabilities {
-	/**
-	 * Defines how text documents are synced. Is either a detailed structure defining each notification or
-     * for backwards compatibility the TextDocumentSyncKind number.
-	 */
-	Either<TextDocumentSyncKind, TextDocumentSyncOptions> textDocumentSync
-
-	/**
-	 * The server provides hover support.
-	 */
-	Boolean hoverProvider
-
-	/**
-	 * The server provides completion support.
-	 */
-	CompletionOptions completionProvider
-
-	/**
-	 * The server provides signature help support.
-	 */
-	SignatureHelpOptions signatureHelpProvider
-
-	/**
-	 * The server provides goto definition support.
-	 */
-	Boolean definitionProvider
-
-	/**
-	 * The server provides find references support.
-	 */
-	Boolean referencesProvider
-
-	/**
-	 * The server provides document highlight support.
-	 */
-	Boolean documentHighlightProvider
-
-	/**
-	 * The server provides document symbol support.
-	 */
-	Boolean documentSymbolProvider
-
-	/**
-	 * The server provides workspace symbol support.
-	 */
-	Boolean workspaceSymbolProvider
-
-	/**
-	 * The server provides code actions.
-	 */
-	Boolean codeActionProvider
-
-	/**
-	 * The server provides code lens.
-	 */
-	CodeLensOptions codeLensProvider
-
-	/**
-	 * The server provides document formatting.
-	 */
-	Boolean documentFormattingProvider
-
-	/**
-	 * The server provides document range formatting.
-	 */
-	Boolean documentRangeFormattingProvider
-
-	/**
-	 * The server provides document formatting on typing.
-	 */
-	DocumentOnTypeFormattingOptions documentOnTypeFormattingProvider
-
-	/**
-	 * The server provides rename support.
-	 */
-	Boolean renameProvider
-	
-	/**
-     * The server provides document link support.
-     */
-    DocumentLinkOptions documentLinkProvider
-    
-    /**
-     * The server provides execute command support.
-     */
-    ExecuteCommandOptions executeCommandProvider
-    
-    /**
-     * Experimental server capabilities.
-     */
-    Object experimental
-
-    /**
-     * Capabilities of the server regarding workspace.
-     * 
-     * This is an LSP <b>proposal</b>.
-     */
-    @Beta WorkspaceServerCapabilities workspace
-
+class BuildServerCapabilities {
+  /** The server can compile targets via method buildTarget/compile */
+  Boolean compileProvider
+  /** The server can test targets via method buildTarget/test */
+  Boolean testProvider
+  /** The server can provide a list of targets that contain a
+    * single text document via the method textDocument/buildTargets */
+  Boolean textDocumentBuildTargetsProvider
+  /** The server provides sources for library dependencies
+    * via method buildTarget/dependencySources */
+  Boolean dependencySourcesProvider
+  /** The server sends notifications to the client on build
+    * target change events via buildTarget/didChange */
+  Boolean buildTargetChangedProvider
 }
 
 /**
