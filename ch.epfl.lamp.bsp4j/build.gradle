@@ -27,3 +27,12 @@ jar.manifest {
 	instruction 'Import-Package', "com.google.common.*;version=\"$versions.guava\""
 	instruction 'Import-Package', '*'
 }
+
+apply plugin: 'java'
+
+test {
+    testLogging {
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
+}

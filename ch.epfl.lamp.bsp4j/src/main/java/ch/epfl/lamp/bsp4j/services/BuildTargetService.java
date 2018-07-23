@@ -17,12 +17,16 @@ import org.eclipse.lsp4j.jsonrpc.services.JsonSegment;
 
 import com.google.common.annotations.Beta;
 
-@JsonSegment("workspace")
-public interface WorkspaceService {
-  /**
-   * The workspace build targets request is sent from the client to the server
-   * to ask for the list of all available build targets in the workspace.
-   */
+@JsonSegment("buildTarget")
+public interface BuildTargetService {
+	/**
+   * The build target changed notification is sent from the server to the client
+   * to signal a change in a build target. The server communicates during the
+   * initialize handshake whether this method is supported or not.
+	 */
+	@JsonNotification
+	void didChange(DidChangeBuildTargetParams params);
+
   @JsonRequest
-  CompletableFuture<WorkspaceBuildTargetsResult> buildTargets(WorkspaceBuildTargetsParams params);
+  CompletableFuture<CompileReport> compile(CompileParams params);
 }

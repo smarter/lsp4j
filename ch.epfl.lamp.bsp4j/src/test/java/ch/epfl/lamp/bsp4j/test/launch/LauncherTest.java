@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.eclipse.lsp4j.CompletionItem;
 import org.eclipse.lsp4j.CompletionItemKind;
@@ -42,14 +43,31 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.lang.System.out;
+import static java.lang.System.err;
+
 public class LauncherTest {
 
 	private static final long TIMEOUT = 2000;
 
-	@Test public void testNotification() throws IOException {
+	@Test public void testInitialize() throws Exception {
     LanguageServer server = clientLauncher.getRemoteProxy();
-    InitializeBuildParams params = new InitializeBuildParams();
-    server.initialize(params);
+    InitializeBuildParams params = new InitializeBuildParams("/home/smarter/opt/scala-seed-project");
+    InitializeBuildResult result = server.initialize(params).get();
+
+    out.println("result: " + result);
+
+    WorkspaceService workspace = server.getWorkspaceService();
+    WorkspaceBuildTargetsParams bParams = new WorkspaceBuildTargetsParams();
+    WorkspaceBuildTargetsResult bResult = workspace.buildTargets(bParams).get();
+
+    out.println("bResult: " + bResult);
+
+    BuildTargetService buildTarget = server.getBuildTargetService();
+    CompileParams cParams = new CompileParams(bResult.getTargets().stream().map(t -> t.getId()).collect(Collectors.toList()));
+    CompileReport cReport = buildTarget.compile(cParams).get();
+
+    out.println("cReport: " + cReport);
 	}
 
 	// @Test public void testRequest() throws Exception {
@@ -93,9 +111,10 @@ public class LauncherTest {
 
 		@Override
 		public void notify(String method, Object parameter) {
-			Assert.assertTrue(expectedNotifications.containsKey(method));
-			Object object = expectedNotifications.remove(method);
-			Assert.assertEquals(object.toString(), parameter.toString());
+      out.println("Got notification method: " + method + " with parameter: " + parameter);
+			// Assert.assertTrue(expectedNotifications.containsKey(method));
+			// Object object = expectedNotifications.remove(method);
+			// Assert.assertEquals(object.toString(), parameter.toString());
 		}
 
 		/**

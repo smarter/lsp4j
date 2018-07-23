@@ -18,6 +18,196 @@ import org.eclipse.lsp4j.jsonrpc.validation.NonNull
 import com.google.common.annotations.Beta
 
 @JsonRpcData
+class BuildTarget {
+  /** The target’s unique identifier */
+  @NonNull
+  BuildTargetIdentifier id
+
+  /** A human readable name for this target.
+    * May be presented in the user interface.
+    * Should be unique if possible.
+    * The id.uri is used if None. */
+  String displayName
+
+  /** The category of this build target. */
+  @NonNull
+  List<BuildTargetKind> kind
+
+  /** The set of languages that this target contains.
+    * The ID string for each language is defined in the LSP. */
+  @NonNull
+  List<String> languageIds
+
+  /** Language-specific metadata about this target.
+    * See ScalaBuildTarget as an example. */
+  Object data
+
+  new() {
+  }
+
+  new(@NonNull BuildTargetIdentifier id, String displayName, @NonNull List<BuildTargetKind> kind, @NonNull List<String> languageIds) {
+    this.id = id
+    this.displayName = displayName
+    this.kind = kind
+    this.languageIds = languageIds
+  }
+
+  new(@NonNull BuildTargetIdentifier id, String displayName, @NonNull List<BuildTargetKind> kind, @NonNull List<String> languageIds, Object data) {
+    this(id, displayName, kind, languageIds)
+    this.data = data
+  }
+}
+
+/**
+ * A unique identifier for a target.
+ */
+@JsonRpcData
+class BuildTargetIdentifier {
+	/**
+	 * The text target's uri.
+	 */
+	@NonNull
+	String uri
+
+  new() {
+  }
+    
+  new(@NonNull String uri) {
+    this.uri = uri
+  }
+}
+
+/**
+ * The parameters of a Workspace Build Targets Request.
+ */
+@JsonRpcData
+class WorkspaceBuildTargetsParams {
+}
+
+@JsonRpcData
+class WorkspaceBuildTargetsResult {
+  /** The build targets in this workspace that
+    * contain sources with the given language ids. */
+	@NonNull
+	List<BuildTarget> targets
+
+  new() {
+  }
+    
+  new(@NonNull List<BuildTarget> targets) {
+    this.targets = targets
+  }
+}
+
+/**
+ * The parameters of a Workspace Build Targets Request.
+ */
+@JsonRpcData
+class DidChangeBuildTargetParams {
+  @NonNull
+  List<BuildTargetEvent> changes
+
+  new() {
+  }
+
+  new(@NonNull List<BuildTargetEvent> changes) {
+    this.changes = changes
+  }
+}
+
+@JsonRpcData
+class BuildTargetEvent {
+  /** The identifier for the changed build target */
+  @NonNull
+  String uri
+  /** The kind of change for this build target */
+  BuildTargetEventKind kind
+
+  /** Any additional metadata about what information changed. */
+  Object data
+
+  new() {
+  }
+
+  new(@NonNull String uri) {
+    this.uri = uri
+  }
+
+  new(@NonNull String uri, BuildTargetEventKind kind) {
+    this(uri)
+    this.kind = kind
+  }
+
+  new(@NonNull String uri,  BuildTargetEventKind kind, Object data) {
+    this(uri, kind)
+    this.data = data
+  }
+}
+
+@JsonRpcData
+class CompileParams {
+  @NonNull
+  List<BuildTargetIdentifier> targets
+
+  /** Optional arguments to the compilation process. */
+  List<Object> arguments
+
+  new() {
+  }
+
+  new(@NonNull List<BuildTargetIdentifier> targets) {
+    this.targets = targets
+  }
+
+  new(@NonNull List<BuildTargetIdentifier> targets, List<Object> arguments) {
+    this(targets)
+    this.arguments = arguments
+  }
+}
+
+@JsonRpcData
+class CompileReport {
+  @NonNull
+  List<CompileReportItem> items
+}
+
+@JsonRpcData
+class CompileReportItem {
+
+  /** The total number of reported errors compiling this target. */
+  @NonNull
+  Integer errors
+
+  /** The total number of reported warnings compiling the target. */
+  @NonNull
+  Integer warnings
+
+  /** The total number of milliseconds it took to compile the target. */
+  Integer time
+
+  /** The total number of lines of code in the given target. */
+  Integer linesOfCode
+
+  new() {
+  }
+
+  new(@NonNull Integer errors, @NonNull Integer warnings) {
+    this.errors = errors
+    this.warnings = warnings
+  }
+
+  new(@NonNull Integer errors, @NonNull Integer warnings, Integer time) {
+    this(errors, warnings)
+    this.time = time
+  }
+
+  new(@NonNull Integer errors, @NonNull Integer warnings, Integer time, Integer linesOfCode) {
+    this(errors, warnings, time)
+    this.linesOfCode = linesOfCode
+  }
+}
+
+@JsonRpcData
 class DynamicRegistrationCapabilities {
 	/**
      * Supports dynamic registration.
@@ -1523,6 +1713,21 @@ class InitializeBuildParams {
    * Legal values: 'off' | 'messages' | 'verbose'
    */
   String trace
+
+  new() {
+  }
+  
+  new(@NonNull String rootUri) {
+    this.rootUri = rootUri
+  }
+  new(@NonNull String rootUri, ClientCapabilities capabilities) {
+    this(rootUri)
+    this.capabilities = capabilities
+  }
+  new(@NonNull String rootUri, ClientCapabilities capabilities, String trace) {
+    this(rootUri, capabilities)
+    this.trace = trace
+  }
 }
 
 @JsonRpcData

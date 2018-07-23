@@ -63,10 +63,10 @@ public interface LanguageServer {
 	void exit();
 
 	/**
-	 * Provides access to the textDocument services.
+	 * Provides access to the buildTarget services.
 	 */
 	@JsonDelegate
-	TextDocumentService getTextDocumentService();
+	BuildTargetService getBuildTargetService();
 
 	/**
 	 * Provides access to the workspace services.
