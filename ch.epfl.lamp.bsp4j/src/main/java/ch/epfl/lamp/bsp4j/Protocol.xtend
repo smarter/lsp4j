@@ -606,44 +606,28 @@ class TextDocumentClientCapabilities {
     RenameCapabilities rename
 }
 
-/**
- * `ClientCapabilities` now define capabilities for dynamic registration, workspace and text document features the client supports. 
- * The `experimental` can be used to pass experimental capabilities under development.
- * For future compatibility a `ClientCapabilities` object literal can have more properties set than currently defined.
- * Servers receiving a `ClientCapabilities` object literal with unknown properties should ignore these properties.
- * A missing property should be interpreted as an absence of the capability.
- * If a property is missing that defines sub properties all sub properties should be interpreted as an absence of the capability.
- * 
- * Client capabilities got introduced with the version 3.0 of the protocol. They therefore only describe capabilities that got introduced in 3.x or later.
- * Capabilities that existed in the 2.x version of the protocol are still mandatory for clients. Clients cannot opt out of providing them.
- * So even if a client omits the `ClientCapabilities.textDocument.synchronization` 
- * it is still required that the client provides text document synchronization (e.g. open, changed and close notifications).
- */
 @JsonRpcData
-class ClientCapabilities {
-	/**
-     * Workspace specific client capabilities.
-     */
-    WorkspaceClientCapabilities workspace
-    
-    /**
-     * Text document specific client capabilities.
-     */
-    TextDocumentClientCapabilities textDocument
-    
-    /**
-     * Experimental client capabilities.
-     */
-    Object experimental
-    
-    new() {
-    }
-    
-    new(WorkspaceClientCapabilities workspace, TextDocumentClientCapabilities textDocument, Object experimental) {
-    	this.workspace = workspace
-    	this.textDocument = textDocument
-    	this.experimental = experimental
-    }
+class BuildClientCapabilities {
+  /** The languages that this client supports.
+    * The ID strings for each language is defined in the LSP.
+    * The server must never respond with build targets for other
+    * languages than those that appear in this list. */
+  @NonNull
+  List<String> languageIds
+  
+  /** The client can provide support for the file watching
+    * notifications to the server. A language server can forward
+    * these notifications from the editor. */
+  @NonNull
+  Boolean providesFileWatching
+  
+  new() {
+  }
+  
+  new(@NonNull List<String> languageIds, @NonNull Boolean providesFileWatching) {
+    this.languageIds = languageIds
+    this.providesFileWatching = providesFileWatching
+  }
 }
 
 /**
@@ -1697,15 +1681,13 @@ interface InitializeErrorCode {
  */
 @JsonRpcData
 class InitializeBuildParams {
-	/**
-   * The rootUri of the workspace. Is null if no folder is open.
-   */
+	/** The rootUri of the workspace */
+  @NonNull
 	String rootUri
 
-	/**
-	 * The capabilities provided by the client (editor)
-	 */
-	ClientCapabilities capabilities
+	/** The capabilities of the client */
+  @NonNull
+	BuildClientCapabilities capabilities
 	
 	/**
    * The initial trace setting. If omitted trace is disabled ('off').
@@ -1717,14 +1699,11 @@ class InitializeBuildParams {
   new() {
   }
   
-  new(@NonNull String rootUri) {
+  new(@NonNull String rootUri, @NonNull BuildClientCapabilities capabilities) {
     this.rootUri = rootUri
-  }
-  new(@NonNull String rootUri, ClientCapabilities capabilities) {
-    this(rootUri)
     this.capabilities = capabilities
   }
-  new(@NonNull String rootUri, ClientCapabilities capabilities, String trace) {
+  new(@NonNull String rootUri, @NonNull BuildClientCapabilities capabilities, String trace) {
     this(rootUri, capabilities)
     this.trace = trace
   }
@@ -1999,19 +1978,39 @@ class RenameParams {
 
 @JsonRpcData
 class BuildServerCapabilities {
-  /** The server can compile targets via method buildTarget/compile */
-  Boolean compileProvider
-  /** The server can test targets via method buildTarget/test */
-  Boolean testProvider
+  /**  The languages the server supports compilation via method buildTarget/compile. */
+  CompileProvider compileProvider
+  /** The languages the server supports test execution via method buildTarget/test */
+  TestProvider testProvider
+  /** The languages the server supports run via method buildTarget/run */
+  RunProvider runProvider
   /** The server can provide a list of targets that contain a
     * single text document via the method textDocument/buildTargets */
-  Boolean textDocumentBuildTargetsProvider
+  Boolean providesTextDocumentBuildTargets
   /** The server provides sources for library dependencies
     * via method buildTarget/dependencySources */
-  Boolean dependencySourcesProvider
+  Boolean providesDependencySources
+  /** The server provides all the resource dependencies
+    * via method buildTarget/resources */
+  Boolean providesResources
   /** The server sends notifications to the client on build
     * target change events via buildTarget/didChange */
-  Boolean buildTargetChangedProvider
+  Boolean providesBuildTargetChanged
+}
+
+@JsonRpcData
+class CompileProvider {
+  List<String> languageIds
+}
+
+@JsonRpcData
+class TestProvider {
+  List<String> languageIds
+}
+
+@JsonRpcData
+class RunProvider {
+  List<String> languageIds
 }
 
 /**

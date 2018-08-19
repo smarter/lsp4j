@@ -52,7 +52,12 @@ public class LauncherTest {
 
 	@Test public void testInitialize() throws Exception {
     LanguageServer server = clientLauncher.getRemoteProxy();
-    InitializeBuildParams params = new InitializeBuildParams("/home/smarter/opt/scala-seed-project");
+
+    List<String> list = new ArrayList<>();
+    list.add("scala");
+
+    BuildClientCapabilities cap = new BuildClientCapabilities(list, false);
+    InitializeBuildParams params = new InitializeBuildParams("/home/smarter/opt/scala-seed-project", cap);
     InitializeBuildResult result = server.initialize(params).get();
 
     out.println("result: " + result);
@@ -152,12 +157,14 @@ public class LauncherTest {
 
 	@Before public void setup() throws IOException {
 
-    Socket clientSocket = new Socket("localhost", 4200);
+    ServerSocket ss = new ServerSocket(4200);
+
+    Socket clientSocket = ss.accept();  //new Socket("localhost", 4200);
 		InputStream inClient = clientSocket.getInputStream();
 		OutputStream outClient = clientSocket.getOutputStream();
 
 		client = new AssertingEndpoint();
-		clientLauncher = BSPLauncher.createClientLauncher(ServiceEndpoints.toServiceObject(client, LanguageClient.class), inClient, outClient);
+		clientLauncher = BSPLauncher.createClientLauncher(ServiceEndpoints.toServiceObject(client, LanguageClient.class), inClient, outClient, false, new java.io.PrintWriter(System.err, true));
 		clientListening = clientLauncher.startListening();
 	}
 
