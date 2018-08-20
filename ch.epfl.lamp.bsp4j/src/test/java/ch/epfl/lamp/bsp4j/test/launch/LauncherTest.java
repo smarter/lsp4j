@@ -69,7 +69,7 @@ public class LauncherTest {
     out.println("bResult: " + bResult);
 
     BuildTargetService buildTarget = server.getBuildTargetService();
-    CompileParams cParams = new CompileParams(bResult.getTargets().stream().map(t -> t.getId()).collect(Collectors.toList()));
+    CompileParams cParams = new CompileParams(bResult.getTargets().stream().map(t -> t.getId()).collect(Collectors.toList()), null, new ArrayList<>());
     CompileReport cReport = buildTarget.compile(cParams).get();
 
     out.println("cReport: " + cReport);
