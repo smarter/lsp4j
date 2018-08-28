@@ -7,7 +7,7 @@
  *******************************************************************************/
 package ch.epfl.lamp.bsp4j.services;
 
-public interface LanguageClientAware {
+public interface BuildClientAware {
 
-	void connect(LanguageClient client);
+	void connect(BuildClient client);
 }

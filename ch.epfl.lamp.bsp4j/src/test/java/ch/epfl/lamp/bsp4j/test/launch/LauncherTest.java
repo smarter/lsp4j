@@ -51,7 +51,7 @@ public class LauncherTest {
 	private static final long TIMEOUT = 2000;
 
 	@Test public void testInitialize() throws Exception {
-    LanguageServer server = clientLauncher.getRemoteProxy();
+    BuildServer server = clientLauncher.getRemoteProxy();
 
     List<String> list = new ArrayList<>();
     list.add("scala");
@@ -148,11 +148,11 @@ public class LauncherTest {
 
 	}
 	private AssertingEndpoint server;
-	private Launcher<LanguageClient> serverLauncher;
+	private Launcher<BuildClient> serverLauncher;
 	private Future<?> serverListening;
 
 	private AssertingEndpoint client;
-	private Launcher<LanguageServer> clientLauncher;
+	private Launcher<BuildServer> clientLauncher;
 	private Future<?> clientListening;
 
 	@Before public void setup() throws IOException {
@@ -164,7 +164,7 @@ public class LauncherTest {
 		OutputStream outClient = clientSocket.getOutputStream();
 
 		client = new AssertingEndpoint();
-		clientLauncher = BSPLauncher.createClientLauncher(ServiceEndpoints.toServiceObject(client, LanguageClient.class), inClient, outClient, false, new java.io.PrintWriter(System.err, true));
+		clientLauncher = BSPLauncher.createClientLauncher(ServiceEndpoints.toServiceObject(client, BuildClient.class), inClient, outClient, false, new java.io.PrintWriter(System.err, true));
 		clientListening = clientLauncher.startListening();
 	}
 

@@ -16,8 +16,8 @@ import java.util.function.Function;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer;
 import org.eclipse.lsp4j.jsonrpc.validation.ReflectiveMessageValidator;
-import ch.epfl.lamp.bsp4j.services.LanguageClient;
-import ch.epfl.lamp.bsp4j.services.LanguageServer;
+import ch.epfl.lamp.bsp4j.services.BuildClient;
+import ch.epfl.lamp.bsp4j.services.BuildServer;
 
 /**
  * Specialized launcher for the Language Server Protocol.
@@ -33,10 +33,10 @@ public final class BSPLauncher {
 	 * @param in - input stream to listen for incoming messages
 	 * @param out - output stream to send outgoing messages
 	 */
-	public static Launcher<LanguageClient> createServerLauncher(LanguageServer server, InputStream in, OutputStream out) {
-		return new Builder<LanguageClient>()
+	public static Launcher<BuildClient> createServerLauncher(BuildServer server, InputStream in, OutputStream out) {
+		return new Builder<BuildClient>()
 				.setLocalService(server)
-				.setRemoteInterface(LanguageClient.class)
+				.setRemoteInterface(BuildClient.class)
 				.setInput(in)
 				.setOutput(out)
 				.create();
@@ -51,11 +51,11 @@ public final class BSPLauncher {
 	 * @param validate - whether messages should be validated with the {@link ReflectiveMessageValidator}
 	 * @param trace - a writer to which incoming and outgoing messages are traced, or {@code null} to disable tracing
 	 */
-	public static Launcher<LanguageClient> createServerLauncher(LanguageServer server, InputStream in, OutputStream out,
+	public static Launcher<BuildClient> createServerLauncher(BuildServer server, InputStream in, OutputStream out,
 			boolean validate, PrintWriter trace) {
-		return new Builder<LanguageClient>()
+		return new Builder<BuildClient>()
 				.setLocalService(server)
-				.setRemoteInterface(LanguageClient.class)
+				.setRemoteInterface(BuildClient.class)
 				.setInput(in)
 				.setOutput(out)
 				.validateMessages(validate)
@@ -74,11 +74,11 @@ public final class BSPLauncher {
 	 * @param executorService - the executor service used to start threads
 	 * @param wrapper - a function for plugging in additional message consumers
 	 */
-	public static Launcher<LanguageClient> createServerLauncher(LanguageServer server, InputStream in, OutputStream out,
+	public static Launcher<BuildClient> createServerLauncher(BuildServer server, InputStream in, OutputStream out,
 			ExecutorService executorService, Function<MessageConsumer, MessageConsumer> wrapper) {
-		return new Builder<LanguageClient>()
+		return new Builder<BuildClient>()
 				.setLocalService(server)
-				.setRemoteInterface(LanguageClient.class)
+				.setRemoteInterface(BuildClient.class)
 				.setInput(in)
 				.setOutput(out)
 				.setExecutorService(executorService)
@@ -93,10 +93,10 @@ public final class BSPLauncher {
 	 * @param in - input stream to listen for incoming messages
 	 * @param out - output stream to send outgoing messages
 	 */
-	public static Launcher<LanguageServer> createClientLauncher(LanguageClient client, InputStream in, OutputStream out) {
-		return new Builder<LanguageServer>()
+	public static Launcher<BuildServer> createClientLauncher(BuildClient client, InputStream in, OutputStream out) {
+		return new Builder<BuildServer>()
 				.setLocalService(client)
-				.setRemoteInterface(LanguageServer.class)
+				.setRemoteInterface(BuildServer.class)
 				.setInput(in)
 				.setOutput(out)
 				.create();
@@ -111,11 +111,11 @@ public final class BSPLauncher {
 	 * @param validate - whether messages should be validated with the {@link ReflectiveMessageValidator}
 	 * @param trace - a writer to which incoming and outgoing messages are traced, or {@code null} to disable tracing
 	 */
-	public static Launcher<LanguageServer> createClientLauncher(LanguageClient client, InputStream in, OutputStream out,
+	public static Launcher<BuildServer> createClientLauncher(BuildClient client, InputStream in, OutputStream out,
 			boolean validate, PrintWriter trace) {
-		return new Builder<LanguageServer>()
+		return new Builder<BuildServer>()
 				.setLocalService(client)
-				.setRemoteInterface(LanguageServer.class)
+				.setRemoteInterface(BuildServer.class)
 				.setInput(in)
 				.setOutput(out)
 				.validateMessages(validate)
@@ -134,11 +134,11 @@ public final class BSPLauncher {
 	 * @param executorService - the executor service used to start threads
 	 * @param wrapper - a function for plugging in additional message consumers
 	 */
-	public static Launcher<LanguageServer> createClientLauncher(LanguageClient client, InputStream in, OutputStream out,
+	public static Launcher<BuildServer> createClientLauncher(BuildClient client, InputStream in, OutputStream out,
 			ExecutorService executorService, Function<MessageConsumer, MessageConsumer> wrapper) {
-		return new Builder<LanguageServer>()
+		return new Builder<BuildServer>()
 				.setLocalService(client)
-				.setRemoteInterface(LanguageServer.class)
+				.setRemoteInterface(BuildServer.class)
 				.setInput(in)
 				.setOutput(out)
 				.setExecutorService(executorService)

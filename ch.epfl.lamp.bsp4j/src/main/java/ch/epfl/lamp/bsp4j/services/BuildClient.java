@@ -11,29 +11,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.eclipse.lsp4j.ApplyWorkspaceEditParams;
-import org.eclipse.lsp4j.ApplyWorkspaceEditResponse;
-import org.eclipse.lsp4j.MessageActionItem;
-import org.eclipse.lsp4j.MessageParams;
-import org.eclipse.lsp4j.PublishDiagnosticsParams;
-import org.eclipse.lsp4j.RegistrationParams;
-import org.eclipse.lsp4j.ShowMessageRequestParams;
-import org.eclipse.lsp4j.UnregistrationParams;
-import org.eclipse.lsp4j.WorkspaceFolder;
+import ch.epfl.lamp.bsp4j.MessageActionItem;
+import ch.epfl.lamp.bsp4j.MessageParams;
+import ch.epfl.lamp.bsp4j.PublishDiagnosticsParams;
+import ch.epfl.lamp.bsp4j.RegistrationParams;
+import ch.epfl.lamp.bsp4j.ShowMessageRequestParams;
+import ch.epfl.lamp.bsp4j.UnregistrationParams;
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification;
 import org.eclipse.lsp4j.jsonrpc.services.JsonRequest;
 
 import com.google.common.annotations.Beta;
 
-public interface LanguageClient {
-	/**
-	 * The workspace/applyEdit request is sent from the server to the client to modify resource on the client side.
-	 */
-	@JsonRequest("workspace/applyEdit")
-	default CompletableFuture<ApplyWorkspaceEditResponse> applyEdit(ApplyWorkspaceEditParams params) {
-		throw new UnsupportedOperationException();
-	}
-
+public interface BuildClient {
 	/**
 	 * The client/registerCapability request is sent from the server to the client
 	 * to register for a new capability on the client side.
@@ -65,45 +54,20 @@ public interface LanguageClient {
 	 * Diagnostics notifications are sent from the server to the client to
 	 * signal results of validation runs.
 	 */
-	@JsonNotification("textDocument/publishDiagnostics")
+	@JsonNotification("build/publishDiagnostics")
 	void publishDiagnostics(PublishDiagnosticsParams diagnostics);
 
 	/**
 	 * The show message notification is sent from a server to a client to ask
 	 * the client to display a particular message in the user interface.
 	 */
-	@JsonNotification("window/showMessage")
+	@JsonNotification("build/showMessage")
 	void showMessage(MessageParams messageParams);
-
-	/**
-	 * The show message request is sent from a server to a client to ask the
-	 * client to display a particular message in the user interface. In addition
-	 * to the show message notification the request allows to pass actions and
-	 * to wait for an answer from the client.
-	 */
-	@JsonRequest("window/showMessageRequest")
-	CompletableFuture<MessageActionItem> showMessageRequest(ShowMessageRequestParams requestParams);
 
 	/**
 	 * The log message notification is send from the server to the client to ask
 	 * the client to log a particular message.
 	 */
-	@JsonNotification("window/logMessage")
+	@JsonNotification("build/logMessage")
 	void logMessage(MessageParams message);
-
-	/**
-	 * The workspace/workspaceFolders request is sent from the server to the client
-	 * to fetch the current open list of workspace folders.
-	 *
-	 * This API is a <b>proposal</b> from LSP and may change.
-	 *
-	 * @return null in the response if only a single file is open in the tool,
-	 *         an empty array if a workspace is open but no folders are configured,
-	 *         the workspace folders otherwise.
-	 */
-	@Beta
-	@JsonRequest("workspace/workspaceFolders")
-	default CompletableFuture<List<WorkspaceFolder>> workspaceFolders() {
-		return CompletableFuture.completedFuture(Collections.emptyList());
-	}
 }
